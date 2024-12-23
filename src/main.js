@@ -1,6 +1,6 @@
-import './assets/main.css'
+import { createApp } from 'vue';
+import App from './App.vue';
 
-import { createApp } from 'vue'
-import App from './App.vue'
+axios.defaults.baseURL = 'http://localhost:8080'
 
 createApp(App).mount('#app')
