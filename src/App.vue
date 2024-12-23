@@ -68,38 +68,47 @@
         <label>Server Key Path:</label>
         <input v-model="config.ServerKey" type="text" placeholder="Enter Server Key Path">
       </div>
-      <button @click="newNode">New Node</button>
+      <button @click="newNode" :disabled="isInitializing">New Node</button>
+      <div v-if="message" :class="{'success-message': messageType === 'success', 'error-message': messageType === 'error'}">
+        {{ message }}
+      </div>
     </div>
 
     <div>
       <h2>Quit Node</h2>
-      <button @click="quitNode">Quit Node</button>
+      <button @click="quitNode" :disabled="isInitializing">Quit Node</button>
+      <div v-if="quitMessage" :class="{'success-message': quitMessageType === 'success', 'error-message': quitMessageType === 'error'}">
+        {{ quitMessage }}
+      </div>
     </div>
 
     <div>
       <h2>Print State</h2>
-      <button @click="printState">Print State</button>
-      <pre>{{ nodeState }}</pre>
+      <button @click="printState" :disabled="isInitializing">Print State</button>
+      <pre v-if="nodeState">{{ nodeState }}</pre>
+      <div v-if="printStateMessage" :class="{'success-message': printStateMessageType === 'success', 'error-message': printStateMessageType === 'error'}">
+        {{ printStateMessage }}
+      </div>
     </div>
 
     <div>
       <h2>Lookup</h2>
       <input v-model="lookupFilename" placeholder="Enter filename">
-      <button @click="lookup">Lookup</button>
+      <button @click="lookup" :disabled="isInitializing">Lookup</button>
       <pre>{{ lookupResult }}</pre>
     </div>
 
     <div>
       <h2>Store File</h2>
       <input type="file" @change="onFileChange">
-      <button @click="storeFile">Store File</button>
+      <button @click="storeFile" :disabled="isInitializing">Store File</button>
       <pre>{{ storeFileResult }}</pre>
     </div>
 
     <div>
       <h2>Get File</h2>
       <input v-model="getFileFilename" placeholder="Enter filename">
-      <button @click="getFile">Get File</button>
+      <button @click="getFile" :disabled="isInitializing">Get File</button>
     </div>
 
     <div v-if="error">
@@ -125,7 +134,7 @@ export default {
         JoinPort: '',
         StabilizeTime: 3000,
         FixFingersTime: 1000,
-        CheckPredecessorTime: 1000,
+        CheckPredecessorTime: 3000,
         AESBool: false,
         AESKeyPath: '',
         TLSBool: false,
@@ -139,35 +148,65 @@ export default {
       storeFileResult: '',
       getFileFilename: '',
       error: null,
-      file: null
+      file: null,
+      message: '',
+      messageType: '',
+      quitMessage: '',
+      quitMessageType: '',
+      printStateMessage: '',
+      printStateMessageType: '',
+      isInitializing: false
     };
   },
   methods: {
     async newNode() {
       try {
         this.error = null;
+        this.message = '';
+        this.isInitializing = true; // Start initializing
         console.log('Sending request to create new node with config:', this.config);
         await axios.post('/new', this.config);
         await axios.get('/initialize');
+        
+        this.message = 'New node created successfully!';
+        this.messageType = 'success';
       } catch (err) {
         this.error = err.response ? err.response.data : err.message;
+        this.message = 'Failed to create new node: ' + this.error;
+        this.messageType = 'error';
+      } finally {
+        // Reset isInitializing after 5 seconds
+        setTimeout(() => {
+          this.isInitializing = false;
+        }, 5000);
       }
     },
     async quitNode() {
       try {
         this.error = null;
-        await axios.get('/quit');
+        this.quitMessage = '';
+        const response = await axios.get('/quit');
+        this.quitMessage = response.data.message;
+        this.quitMessageType = 'success';
       } catch (err) {
         this.error = err.response ? err.response.data : err.message;
+        this.quitMessage = 'Failed to quit node: ' + (this.error.details || this.error);
+        this.quitMessageType = 'error';
       }
     },
     async printState() {
       try {
         this.error = null;
+        this.printStateMessage = '';
+        this.nodeState = '';
         const response = await axios.get('/printstate');
-        this.nodeState = response.data;
+        this.nodeState = response.data.nodestate;
+        this.printStateMessage = 'Node state retrieved successfully!';
+        this.printStateMessageType = 'success';
       } catch (err) {
         this.error = err.response ? err.response.data : err.message;
+        this.printStateMessage = 'Failed to retrieve node state: ' + (this.error.details || this.error);
+        this.printStateMessageType = 'error';
       }
     },
     async lookup() {
@@ -229,5 +268,11 @@ button {
 pre {
   background: #f4f4f4;
   padding: 10px;
+}
+.success-message {
+  color: green;
+}
+.error-message {
+  color: red;
 }
 </style>
