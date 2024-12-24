@@ -27,3 +27,11 @@ npm run dev
 ```sh
 npm run build
 ```
+
+### Start a Build Dist
+
+```sh
+npm install -g serve
+
+serve -s dist
+```
