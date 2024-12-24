@@ -5,27 +5,39 @@
     <div v-if="printStateMessage" :class="{'success-message': printStateMessageType === 'success', 'error-message': printStateMessageType === 'error'}">
       {{ printStateMessage }}
     </div>
-    <div v-if="nodeState">
-      <h3>Info</h3>
-      <pre>{{ nodeState.info }}</pre>
-      <h3>Predecessor</h3>
-      <pre>{{ nodeState.predecessor }}</pre>
-      <h3>Successors</h3>
-      <pre v-for="(successor, index) in nodeState.successors" :key="index">{{ successor }}</pre>
-      <h3>Finger Table</h3>
-      <pre v-for="(finger, index) in nodeState.fingerTable" :key="index">{{ finger }} - Index: {{ nodeState.fingerIndex[index] }}</pre>
-      <h3>Local Storage Name</h3>
-      <pre>{{ nodeState.localStorageName }}</pre>
-      <h3>Backup Storages Name</h3>
-      <pre v-for="(backup, index) in nodeState.backupStoragesName" :key="index">{{ backup }}</pre>
+    <div v-if="nodeState" class="two-columns">
+      <div>
+        <h3>Info</h3>
+        <NodeInfo :nodeInfo="nodeState.info" />
+        <h3>Predecessor</h3>
+        <NodeInfo :nodeInfo="nodeState.predecessor" />
+        <h3>Successors</h3>
+        <NodeInfo v-for="(successor, index) in nodeState.successors" :key="index" :nodeInfo="successor" />
+        <h3>Local Storage</h3>
+        <StorageList :items="[nodeState.localStorageName]" />
+      </div>
+      <div>
+        <h3>Finger Table</h3>
+        <FingerInfo v-for="(finger, index) in nodeState.fingerTable" :key="index" :finger="finger" :index="index" :fingerIndex="nodeState.fingerIndex[index]" />
+        <h3>Backup Storages</h3>
+        <StorageList :items="nodeState.backupStoragesName" />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+import FingerInfo from './FingerInfo.vue';
+import NodeInfo from './NodeInfo.vue';
+import StorageList from './StorageList.vue';
 
 export default {
+  components: {
+    NodeInfo,
+    FingerInfo,
+    StorageList
+  },
   data() {
     return {
       nodeState: '',
@@ -79,5 +91,12 @@ pre {
 }
 .error-message {
   color: red;
+}
+.two-columns {
+  display: flex;
+  justify-content: space-between;
+}
+.two-columns > div {
+  width: 48%;
 }
 </style>
