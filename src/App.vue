@@ -5,19 +5,13 @@
     <div v-else>
       <div>
         <button @click="currentTab = 'quitNode'">Quit Node</button>
-        <button @click="currentTab = 'storeGet'">Store/Get File</button>
+        <button @click="currentTab = 'storefile'">Store File</button>
+        <button @click="currentTab = 'getfile'">Get File</button>
         <button @click="currentTab = 'printState'">Print State</button>
       </div>
-      <div v-if="currentTab === 'storeGet'">
-        <StoreFile @action="handleAction" />
-        <GetFile @action="handleAction" />
-      </div>
-      <div v-if="currentTab === 'quitNode'">
-        <QuitNode @nodeQuit="handleNodeQuit" />
-      </div>
-      <div v-if="currentTab === 'printState'">
-        <PrintState @action="handleAction" />
-      </div>
+      <keep-alive>
+        <component :is="currentTabComponent" @action="handleAction" />
+      </keep-alive>
     </div>
   </div>
 </template>
@@ -43,15 +37,26 @@ export default {
       currentTab: 'storeGet'
     };
   },
+  computed: {
+    currentTabComponent() {
+      switch (this.currentTab) {
+        case 'quitNode':
+          return QuitNode;
+        case 'storefile':
+          return StoreFile;
+        case 'getfile':
+          return GetFile;
+        case 'printState':
+          return PrintState;
+        default:
+          return PrintState;
+      }
+    }
+  },
   methods: {
     handleNodeCreated(success) {
       if (success) {
         this.showNewNode = false;
-      }
-    },
-    handleNodeQuit(success) {
-      if (success) {
-        this.showNewNode = true;
       }
     },
     handleAction(success) {
