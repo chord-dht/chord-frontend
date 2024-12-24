@@ -3,10 +3,21 @@
     <h1>Chord Backend Frontend</h1>
     <NewNode v-if="showNewNode" @nodeCreated="handleNodeCreated" />
     <div v-else>
-      <QuitNode @nodeQuit="handleNodeQuit" />
-      <PrintState @action="handleAction" />
-      <StoreFile @action="handleAction" />
-      <GetFile @action="handleAction" />
+      <div>
+        <button @click="currentTab = 'storeGet'">Store/Get File</button>
+        <button @click="currentTab = 'quitNode'">Quit Node</button>
+        <button @click="currentTab = 'printState'">Print State</button>
+      </div>
+      <div v-if="currentTab === 'storeGet'">
+        <StoreFile @action="handleAction" />
+        <GetFile @action="handleAction" />
+      </div>
+      <div v-if="currentTab === 'quitNode'">
+        <QuitNode @nodeQuit="handleNodeQuit" />
+      </div>
+      <div v-if="currentTab === 'printState'">
+        <PrintState @action="handleAction" />
+      </div>
     </div>
   </div>
 </template>
@@ -28,7 +39,8 @@ export default {
   },
   data() {
     return {
-      showNewNode: true
+      showNewNode: true,
+      currentTab: 'storeGet'
     };
   },
   methods: {
