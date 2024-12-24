@@ -45,6 +45,14 @@
         <input v-model="config.CheckPredecessorTime" type="number" placeholder="Enter Check Predecessor Time">
       </div>
       <div>
+        <label>Storage Path:</label>
+        <input v-model="config.StorageDir" type="text" placeholder="Enter Storage Path">
+      </div>
+      <div>
+        <label>Backup Storage Path:</label>
+        <input v-model="config.BackupDir" type="text" placeholder="Backup Storage Path">
+      </div>
+      <div>
         <label>AES Enabled:</label>
         <input v-model="config.AESBool" type="checkbox">
       </div>
@@ -135,6 +143,8 @@ export default {
         StabilizeTime: 3000,
         FixFingersTime: 1000,
         CheckPredecessorTime: 3000,
+        StorageDir: './storage',
+        BackupDir: './backup',
         AESBool: false,
         AESKeyPath: '',
         TLSBool: false,
