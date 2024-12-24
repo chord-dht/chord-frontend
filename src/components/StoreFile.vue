@@ -29,7 +29,8 @@ export default {
         const formData = new FormData();
         formData.append('file', this.file);
         const response = await axios.post('/storefile', formData);
-        this.storeFileResult = `File stored successfully! Identifier: ${response.data.file_identifier}, Target Node: ${response.data.target_node}`;
+        const targetNode = JSON.stringify(response.data.target_node);
+        this.storeFileResult = `File stored successfully! Identifier: ${response.data.file_identifier}, Target Node: ${targetNode}`;
       } catch (err) {
         this.storeFileResult = `Failed to store file: ${err.response ? err.response.data.message : err.message}`;
         if (err.response && err.response.data.details) {
@@ -39,7 +40,7 @@ export default {
           this.storeFileResult += `\nFile Identifier: ${err.response.data.file_identifier}`;
         }
         if (err.response && err.response.data.target_node) {
-          this.storeFileResult += `\nTarget Node: ${err.response.data.target_node}`;
+          this.storeFileResult += `\nTarget Node: ${JSON.stringify(err.response.data.target_node)}`;
         }
       } finally {
         this.isInitializing = false;

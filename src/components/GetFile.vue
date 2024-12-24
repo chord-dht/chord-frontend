@@ -23,15 +23,16 @@ export default {
       try {
         this.getFileResult = '';
         this.isInitializing = true;
-        await axios.post('/getfile', { filename: this.getFileFilename });
-        const response = await axios.post('/downloadfile', { filename: this.getFileFilename }, { responseType: 'blob' });
-        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const getFileResponse = await axios.post('/getfile', { filename: this.getFileFilename });
+        const downloadResponse = await axios.post('/downloadfile', { filename: this.getFileFilename }, { responseType: 'blob' });
+        const url = window.URL.createObjectURL(new Blob([downloadResponse.data]));
         const link = document.createElement('a');
         link.href = url;
         link.setAttribute('download', this.getFileFilename);
         document.body.appendChild(link);
         link.click();
-        this.getFileResult = 'File downloaded successfully!';
+        const targetNode = JSON.stringify(getFileResponse.data.target_node);
+        this.getFileResult = `File downloaded successfully! Identifier: ${getFileResponse.data.file_identifier}, Target Node: ${targetNode}`;
       } catch (err) {
         this.getFileResult = `Failed to get file: ${err.response ? err.response.data.message : err.message}`;
         if (err.response && err.response.data.details) {
@@ -41,7 +42,7 @@ export default {
           this.getFileResult += `\nFile Identifier: ${err.response.data.file_identifier}`;
         }
         if (err.response && err.response.data.target_node) {
-          this.getFileResult += `\nTarget Node: ${err.response.data.target_node}`;
+          this.getFileResult += `\nTarget Node: ${JSON.stringify(err.response.data.target_node)}`;
         }
       } finally {
         this.isInitializing = false;
