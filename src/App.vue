@@ -4,8 +4,8 @@
     <NewNode v-if="showNewNode" @nodeCreated="handleNodeCreated" />
     <div v-else>
       <div>
-        <button @click="currentTab = 'storeGet'">Store/Get File</button>
         <button @click="currentTab = 'quitNode'">Quit Node</button>
+        <button @click="currentTab = 'storeGet'">Store/Get File</button>
         <button @click="currentTab = 'printState'">Print State</button>
       </div>
       <div v-if="currentTab === 'storeGet'">
