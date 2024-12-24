@@ -93,17 +93,23 @@
     <div>
       <h2>Print State</h2>
       <button @click="printState" :disabled="isInitializing">Print State</button>
-      <pre v-if="nodeState">{{ nodeState }}</pre>
       <div v-if="printStateMessage" :class="{'success-message': printStateMessageType === 'success', 'error-message': printStateMessageType === 'error'}">
         {{ printStateMessage }}
       </div>
-    </div>
-
-    <div>
-      <h2>Lookup</h2>
-      <input v-model="lookupFilename" placeholder="Enter filename">
-      <button @click="lookup" :disabled="isInitializing">Lookup</button>
-      <pre>{{ lookupResult }}</pre>
+      <div v-if="nodeState">
+        <h3>Info</h3>
+        <pre>{{ nodeState.info }}</pre>
+        <h3>Predecessor</h3>
+        <pre>{{ nodeState.predecessor }}</pre>
+        <h3>Successors</h3>
+        <pre v-for="(successor, index) in nodeState.successors" :key="index">{{ successor }}</pre>
+        <h3>Finger Table</h3>
+        <pre v-for="(finger, index) in nodeState.fingerTable" :key="index">{{ finger }} - Index: {{ nodeState.fingerIndex[index] }}</pre>
+        <h3>Local Storage Name</h3>
+        <pre>{{ nodeState.localStorageName }}</pre>
+        <h3>Backup Storages Name</h3>
+        <pre v-for="(backup, index) in nodeState.backupStoragesName" :key="index">{{ backup }}</pre>
+      </div>
     </div>
 
     <div>
@@ -153,8 +159,6 @@ export default {
         ServerKey: ''
       },
       nodeState: '',
-      lookupFilename: '',
-      lookupResult: '',
       storeFileResult: '',
       getFileFilename: '',
       error: null,
@@ -217,15 +221,6 @@ export default {
         this.error = err.response ? err.response.data : err.message;
         this.printStateMessage = 'Failed to retrieve node state: ' + (this.error.details || this.error);
         this.printStateMessageType = 'error';
-      }
-    },
-    async lookup() {
-      try {
-        this.error = null;
-        const response = await axios.post('/lookup', { filename: this.lookupFilename });
-        this.lookupResult = response.data;
-      } catch (err) {
-        this.error = err.response ? err.response.data : err.message;
       }
     },
     onFileChange(event) {
