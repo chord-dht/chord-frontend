@@ -33,7 +33,11 @@ export default {
         link.click();
         const targetNode = JSON.stringify(getFileResponse.data.target_node);
         this.getFileResult = `File downloaded successfully! Identifier: ${getFileResponse.data.file_identifier}, Target Node: ${targetNode}`;
+
+        this.$emit('action', true);
       } catch (err) {
+        this.$emit('action', false);
+        
         this.getFileResult = `Failed to get file: ${err.response ? err.response.data.message : err.message}`;
         if (err.response && err.response.data.details) {
           this.getFileResult += `\nDetails: ${err.response.data.details}`;

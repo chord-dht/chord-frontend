@@ -1,11 +1,13 @@
 <template>
   <div id="app">
     <h1>Chord Backend Frontend</h1>
-    <NewNode />
-    <QuitNode />
-    <PrintState />
-    <StoreFile />
-    <GetFile />
+    <NewNode v-if="showNewNode" @nodeCreated="handleNodeCreated" />
+    <div v-else>
+      <QuitNode @nodeQuit="handleNodeQuit" />
+      <PrintState @action="handleAction" />
+      <StoreFile @action="handleAction" />
+      <GetFile @action="handleAction" />
+    </div>
   </div>
 </template>
 
@@ -23,6 +25,28 @@ export default {
     PrintState,
     StoreFile,
     GetFile
+  },
+  data() {
+    return {
+      showNewNode: true
+    };
+  },
+  methods: {
+    handleNodeCreated(success) {
+      if (success) {
+        this.showNewNode = false;
+      }
+    },
+    handleNodeQuit(success) {
+      if (success) {
+        this.showNewNode = true;
+      }
+    },
+    handleAction(success) {
+      if (!success) {
+        this.showNewNode = true;
+      }
+    }
   }
 };
 </script>

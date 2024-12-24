@@ -120,9 +120,12 @@ export default {
         await axios.get('/initialize');
         this.message = 'New node created successfully!';
         this.messageType = 'success';
+
+        this.$emit('nodeCreated', true);
       } catch (err) {
         this.message = 'Failed to create new node: ' + (err.response ? err.response.data : err.message);
         this.messageType = 'error';
+        this.$emit('nodeCreated', false);
       } finally {
         setTimeout(() => {
           this.isInitializing = false;

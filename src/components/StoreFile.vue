@@ -31,7 +31,11 @@ export default {
         const response = await axios.post('/storefile', formData);
         const targetNode = JSON.stringify(response.data.target_node);
         this.storeFileResult = `File stored successfully! Identifier: ${response.data.file_identifier}, Target Node: ${targetNode}`;
+
+        this.$emit('action', true);
       } catch (err) {
+        this.$emit('action', false);
+        
         this.storeFileResult = `Failed to store file: ${err.response ? err.response.data.message : err.message}`;
         if (err.response && err.response.data.details) {
           this.storeFileResult += `\nDetails: ${err.response.data.details}`;

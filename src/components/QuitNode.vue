@@ -26,9 +26,13 @@ export default {
         const response = await axios.get('/quit');
         this.quitMessage = response.data.message;
         this.quitMessageType = 'success';
+
+        this.$emit('nodeQuit', true);
       } catch (err) {
         this.quitMessage = 'Failed to quit node: ' + (err.response ? err.response.data : err.message);
         this.quitMessageType = 'error';
+
+        this.$emit('nodeQuit', false);
       }
     }
   }

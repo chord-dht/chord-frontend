@@ -43,9 +43,13 @@ export default {
         this.nodeState = response.data.nodestate;
         this.printStateMessage = 'Node state retrieved successfully!';
         this.printStateMessageType = 'success';
+
+        this.$emit('action', true);
       } catch (err) {
         this.printStateMessage = 'Failed to retrieve node state: ' + (err.response ? err.response.data : err.message);
         this.printStateMessageType = 'error';
+
+        this.$emit('action', false);
       }
     }
   }
