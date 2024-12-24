@@ -123,7 +123,7 @@ export default {
 
         this.$emit('nodeCreated', true);
       } catch (err) {
-        this.message = 'Failed to create new node: ' + (err.response ? err.response.data : err.message);
+        this.message = 'Failed to create new node: ' + (err.response && err.response.data ? JSON.stringify(err.response.data) : err.message);
         this.messageType = 'error';
         this.$emit('nodeCreated', false);
       } finally {
