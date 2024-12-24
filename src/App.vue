@@ -17,11 +17,11 @@
 </template>
 
 <script>
-import GetFile from './components/GetFile.vue';
-import NewNode from './components/NewNode.vue';
-import PrintState from './components/PrintState.vue';
-import QuitNode from './components/QuitNode.vue';
-import StoreFile from './components/StoreFile.vue';
+import GetFile from './GetFile.vue';
+import NewNode from './NewNode.vue';
+import PrintState from './PrintState.vue';
+import QuitNode from './QuitNode.vue';
+import StoreFile from './StoreFile.vue';
 
 export default {
   components: {

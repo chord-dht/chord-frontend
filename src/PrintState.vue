@@ -28,9 +28,9 @@
 
 <script>
 import axios from 'axios';
-import FingerInfo from './FingerInfo.vue';
-import NodeInfo from './NodeInfo.vue';
-import StorageList from './StorageList.vue';
+import FingerInfo from './components/FingerInfo.vue';
+import NodeInfo from './components/NodeInfo.vue';
+import StorageList from './components/StorageList.vue';
 
 export default {
   components: {
