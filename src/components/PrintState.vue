@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2>Print State</h2>
-    <button @click="printState" :disabled="isInitializing">Print State</button>
+    <button @click="printState">Print State</button>
     <div v-if="printStateMessage" :class="{'success-message': printStateMessageType === 'success', 'error-message': printStateMessageType === 'error'}">
       {{ printStateMessage }}
     </div>
@@ -15,12 +15,12 @@
         <NodeInfo v-for="(successor, index) in nodeState.successors" :key="index" :nodeInfo="successor" />
         <h3>Local Storage</h3>
         <StorageList :items="[nodeState.localStorageName]" />
+        <h3>Backup Storages</h3>
+        <StorageList :items="nodeState.backupStoragesName" />
       </div>
       <div>
         <h3>Finger Table</h3>
         <FingerInfo v-for="(finger, index) in nodeState.fingerTable" :key="index" :finger="finger" :index="index" :fingerIndex="nodeState.fingerIndex[index]" />
-        <h3>Backup Storages</h3>
-        <StorageList :items="nodeState.backupStoragesName" />
       </div>
     </div>
   </div>
@@ -43,7 +43,6 @@ export default {
       nodeState: '',
       printStateMessage: '',
       printStateMessageType: '',
-      isInitializing: false
     };
   },
   methods: {
@@ -55,13 +54,9 @@ export default {
         this.nodeState = response.data.nodestate;
         this.printStateMessage = 'Node state retrieved successfully!';
         this.printStateMessageType = 'success';
-
-        this.$emit('action', true);
       } catch (err) {
         this.printStateMessage = 'Failed to retrieve node state: ' + (err.response ? err.response.data : err.message);
         this.printStateMessageType = 'error';
-
-        this.$emit('action', false);
       }
     }
   }

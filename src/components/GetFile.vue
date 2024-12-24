@@ -2,7 +2,7 @@
   <div>
     <h2>Get File</h2>
     <input v-model="getFileFilename" placeholder="Enter filename">
-    <button @click="getFile" :disabled="isInitializing">Get File</button>
+    <button @click="getFile">Get File</button>
     <pre>{{ getFileResult }}</pre>
   </div>
 </template>
@@ -14,7 +14,6 @@ export default {
   data() {
     return {
       getFileFilename: '',
-      isInitializing: false,
       getFileResult: ''
     };
   },
@@ -22,7 +21,6 @@ export default {
     async getFile() {
       try {
         this.getFileResult = '';
-        this.isInitializing = true;
         const getFileResponse = await axios.post('/getfile', { filename: this.getFileFilename });
         const downloadResponse = await axios.post('/downloadfile', { filename: this.getFileFilename }, { responseType: 'blob' });
         const url = window.URL.createObjectURL(new Blob([downloadResponse.data]));
@@ -33,11 +31,7 @@ export default {
         link.click();
         const targetNode = JSON.stringify(getFileResponse.data.target_node);
         this.getFileResult = `File downloaded successfully! Identifier: ${getFileResponse.data.file_identifier}, Target Node: ${targetNode}`;
-
-        this.$emit('action', true);
-      } catch (err) {
-        this.$emit('action', false);
-        
+      } catch (err) {        
         this.getFileResult = `Failed to get file: ${err.response ? err.response.data.message : err.message}`;
         if (err.response && err.response.data.details) {
           this.getFileResult += `\nDetails: ${err.response.data.details}`;
@@ -48,8 +42,6 @@ export default {
         if (err.response && err.response.data.target_node) {
           this.getFileResult += `\nTarget Node: ${JSON.stringify(err.response.data.target_node)}`;
         }
-      } finally {
-        this.isInitializing = false;
       }
     }
   }

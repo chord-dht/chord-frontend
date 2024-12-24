@@ -2,7 +2,7 @@
   <div>
     <h2>Store File</h2>
     <input type="file" @change="onFileChange">
-    <button @click="storeFile" :disabled="isInitializing">Store File</button>
+    <button @click="storeFile">Store File</button>
     <pre>{{ storeFileResult }}</pre>
   </div>
 </template>
@@ -15,7 +15,6 @@ export default {
     return {
       file: null,
       storeFileResult: '',
-      isInitializing: false
     };
   },
   methods: {
@@ -25,17 +24,12 @@ export default {
     async storeFile() {
       try {
         this.storeFileResult = '';
-        this.isInitializing = true;
         const formData = new FormData();
         formData.append('file', this.file);
         const response = await axios.post('/storefile', formData);
         const targetNode = JSON.stringify(response.data.target_node);
         this.storeFileResult = `File stored successfully! Identifier: ${response.data.file_identifier}, Target Node: ${targetNode}`;
-
-        this.$emit('action', true);
       } catch (err) {
-        this.$emit('action', false);
-        
         this.storeFileResult = `Failed to store file: ${err.response ? err.response.data.message : err.message}`;
         if (err.response && err.response.data.details) {
           this.storeFileResult += `\nDetails: ${err.response.data.details}`;
@@ -46,8 +40,6 @@ export default {
         if (err.response && err.response.data.target_node) {
           this.storeFileResult += `\nTarget Node: ${JSON.stringify(err.response.data.target_node)}`;
         }
-      } finally {
-        this.isInitializing = false;
       }
     }
   }

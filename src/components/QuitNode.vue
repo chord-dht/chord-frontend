@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2>Quit Node</h2>
-    <button @click="quitNode" :disabled="isInitializing">Quit Node</button>
+    <button @click="quitNode">Quit Node</button>
     <div v-if="quitMessage" :class="{'success-message': quitMessageType === 'success', 'error-message': quitMessageType === 'error'}">
       {{ quitMessage }}
     </div>
@@ -16,7 +16,6 @@ export default {
     return {
       quitMessage: '',
       quitMessageType: '',
-      isInitializing: false
     };
   },
   methods: {
