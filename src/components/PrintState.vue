@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2>Print State</h2>
-    <button @click="printState">Print State</button>
+    <button @click="printState">Refresh</button>
     <div v-if="printStateMessage" :class="{'success-message': printStateMessageType === 'success', 'error-message': printStateMessageType === 'error'}">
       {{ printStateMessage }}
     </div>
@@ -14,9 +14,9 @@
         <h3>Successors</h3>
         <NodeInfo v-for="(successor, index) in nodeState.successors" :key="index" :nodeInfo="successor" />
         <h3>Local Storage</h3>
-        <StorageList :items="[nodeState.localStorageName]" />
+        <StorageList :title="'Local Storage'" :items="[nodeState.localStorageName]" />
         <h3>Backup Storages</h3>
-        <StorageList :items="nodeState.backupStoragesName" />
+        <StorageList :title="'Backup Storages'" :items="nodeState.backupStoragesName" />
       </div>
       <div>
         <h3>Finger Table</h3>
@@ -52,8 +52,6 @@ export default {
         this.nodeState = '';
         const response = await axios.get('/printstate');
         this.nodeState = response.data.nodestate;
-        this.printStateMessage = 'Node state retrieved successfully!';
-        this.printStateMessageType = 'success';
       } catch (err) {
         this.printStateMessage = 'Failed to retrieve node state: ' + (err.response ? err.response.data : err.message);
         this.printStateMessageType = 'error';
