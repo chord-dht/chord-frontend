@@ -3,6 +3,7 @@
     <h2>Get File</h2>
     <input v-model="getFileFilename" placeholder="Enter filename">
     <button @click="getFile" :disabled="isInitializing">Get File</button>
+    <pre>{{ getFileResult }}</pre>
   </div>
 </template>
 
@@ -13,12 +14,15 @@ export default {
   data() {
     return {
       getFileFilename: '',
-      isInitializing: false
+      isInitializing: false,
+      getFileResult: ''
     };
   },
   methods: {
     async getFile() {
       try {
+        this.getFileResult = '';
+        this.isInitializing = true;
         await axios.post('/getfile', { filename: this.getFileFilename });
         const response = await axios.post('/downloadfile', { filename: this.getFileFilename }, { responseType: 'blob' });
         const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -27,14 +31,25 @@ export default {
         link.setAttribute('download', this.getFileFilename);
         document.body.appendChild(link);
         link.click();
+        this.getFileResult = 'File downloaded successfully!';
       } catch (err) {
-        console.error(err.response ? err.response.data : err.message);
+        this.getFileResult = `Failed to get file: ${err.response ? err.response.data.message : err.message}`;
+        if (err.response && err.response.data.details) {
+          this.getFileResult += `\nDetails: ${err.response.data.details}`;
+        }
+        if (err.response && err.response.data.file_identifier) {
+          this.getFileResult += `\nFile Identifier: ${err.response.data.file_identifier}`;
+        }
+        if (err.response && err.response.data.target_node) {
+          this.getFileResult += `\nTarget Node: ${err.response.data.target_node}`;
+        }
+      } finally {
+        this.isInitializing = false;
       }
     }
   }
 };
 </script>
-
 
 <style scoped>
 #app {
