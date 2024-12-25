@@ -139,6 +139,15 @@ export default {
       try {
         this.message = '';
         this.isInitializing = true;
+
+        this.config.IdentifierLength = parseInt(this.config.IdentifierLength, 10);
+        this.config.SuccessorsLength = parseInt(this.config.SuccessorsLength, 10);
+        this.config.Port = parseInt(this.config.Port, 10);
+        this.config.JoinPort = parseInt(this.config.JoinPort, 10);
+        this.config.StabilizeTime = parseInt(this.config.StabilizeTime, 10);
+        this.config.FixFingersTime = parseInt(this.config.FixFingersTime, 10);
+        this.config.CheckPredecessorTime = parseInt(this.config.CheckPredecessorTime, 10);
+
         await axios.post('/new', this.config);
         await axios.get('/initialize');
         this.message = 'New node created successfully!';
