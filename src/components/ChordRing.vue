@@ -80,8 +80,23 @@ export default {
         .attr('dx', 10)
         .attr('dy', 5)
         .style('text-anchor', 'start')
-        .style('fill', '#333')
+        .style('fill', d => d.label === 'Node' ? 'red' : '#333') // Highlight the node text with red color
         .text(d => d.value); // Display Identifier
+
+      // Add star marker for the node
+      const nodeData = data.find(d => d.label === 'Node');
+      if (nodeData) {
+        const angle = (nodeData.value / Math.pow(2, m)) * 2 * Math.PI - Math.PI / 2;
+        const x = this.radius * Math.cos(angle);
+        const y = this.radius * Math.sin(angle);
+        svg.append('text')
+          .attr('x', x)
+          .attr('y', y - 10) // Position the star above the node
+          .attr('text-anchor', 'middle')
+          .attr('font-size', '20px')
+          .attr('fill', 'red')
+          .text('★'); // Star symbol
+      }
     },
     getChordData() {
       const data = [];
