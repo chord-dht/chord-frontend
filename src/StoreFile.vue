@@ -1,13 +1,7 @@
 <template>
   <div class="store-file">
     <h2>Store File</h2>
-    <el-upload
-      action=""
-      :auto-upload="false"
-      :on-change="onFileChange"
-      :file-list="fileList"
-      class="upload-field"
-    >
+    <el-upload action="" :auto-upload="false" :on-change="onFileChange" :file-list="fileList" class="upload-field">
       <el-button type="primary">Select File</el-button>
     </el-upload>
     <el-button @click="storeFile" :disabled="!file" type="primary" class="action-button">Store File</el-button>
@@ -46,11 +40,11 @@ export default {
         const formData = new FormData();
         formData.append('file', this.file);
         const response = await axios.post('/storefile', formData);
-        const targetNode = JSON.stringify(response.data.target_node);
-        this.storeFileResult = `File stored successfully! Identifier: ${response.data.file_identifier}, Target Node: ${targetNode}`;
+        const { file_identifier, target_node } = response.data.data;
+        this.storeFileResult = `File stored successfully! Identifier: ${file_identifier}, Target Node: ${JSON.stringify(target_node)}`;
         this.storeFileResultType = 'success';
       } catch (err) {
-        this.storeFileResult = `Failed to store file: ${err.response ? err.response.data.message : err.message}`;
+        this.storeFileResult = `Failed to store file: ${err.response ? err.response.data.error_message : err.message}`;
         this.storeFileResultType = 'error';
         if (err.response && err.response.data.details) {
           this.storeFileResult += `\nDetails: ${err.response.data.details}`;

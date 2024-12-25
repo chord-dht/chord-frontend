@@ -18,26 +18,17 @@
         <h3>First Successor</h3>
         <NodeInfo :nodeInfo="nodeState.successors[0]" />
         <h3>Local Storage</h3>
-        <StorageList :title="'Local Storage'" :items="[nodeState.localStorageName]" />
+        <StorageList :title="'Local Storage'" :items="nodeState.localStorageName" />
         <h3>Successors and Backup Storages</h3>
         <div v-for="(successor, index) in nodeState.successors" :key="index">
-          <SuccessorBackup
-            :title="'Successor ' + index"
-            :successor="successor"
-            :backup="nodeState.backupStoragesName[index]"
-          />
+          <SuccessorBackup :title="'Successor ' + index" :successor="successor"
+            :backup="nodeState.backupStoragesName[index]" />
         </div>
       </div>
       <div>
         <h3>Finger Table</h3>
-        <FingerInfo
-          v-for="(finger, index) in nodeState.fingerTable"
-          :key="index"
-          :finger="finger"
-          :index="index"
-          :fingerIndex="nodeState.fingerIndex[index]"
-          :identifier="nodeState.info.Identifier"
-        />
+        <FingerInfo v-for="(finger, index) in nodeState.fingerTable" :key="index" :finger="finger" :index="index"
+          :fingerIndex="nodeState.fingerIndex[index]" :identifier="nodeState.info.Identifier" />
       </div>
     </div>
   </div>
@@ -62,7 +53,7 @@ export default {
   },
   data() {
     return {
-      nodeState: '',
+      nodeState: null,
       printStateMessage: '',
       printStateMessageType: '',
     };
@@ -71,12 +62,13 @@ export default {
     async printState() {
       try {
         this.printStateMessage = '';
-        this.nodeState = '';
+        this.nodeState = null;
         const response = await axios.get('/printstate');
-        this.nodeState = response.data.nodestate;
+        const { node_state } = response.data.data;
+        this.nodeState = node_state;
         this.printStateMessageType = 'success';
       } catch (err) {
-        this.printStateMessage = 'Failed to retrieve node state: ' + (err.response ? err.response.data : err.message);
+        this.printStateMessage = 'Failed to retrieve node state: ' + (err.response ? err.response.data.error_message : err.message);
         this.printStateMessageType = 'error';
       }
     },
@@ -122,8 +114,10 @@ export default {
 h2 {
   color: #333;
   margin: 0;
-  font-size: 24px; /* Increase font size */
-  font-weight: bold; /* Make font bold */
+  font-size: 24px;
+  /* Increase font size */
+  font-weight: bold;
+  /* Make font bold */
 }
 
 .refresh-button {
@@ -140,15 +134,17 @@ h2 {
   gap: 20px;
 }
 
-.two-columns > div {
+.two-columns>div {
   flex: 1;
 }
 
 h3 {
   color: #409eff;
   margin-bottom: 10px;
-  font-size: 20px; /* Increase font size */
-  font-weight: bold; /* Make font bold */
+  font-size: 20px;
+  /* Increase font size */
+  font-weight: bold;
+  /* Make font bold */
 }
 
 pre {
@@ -160,7 +156,8 @@ pre {
 
 .sticky-info {
   z-index: 1000;
-  padding: 0; /* Remove padding */
+  padding: 0;
+  /* Remove padding */
 }
 
 .fixed {

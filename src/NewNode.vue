@@ -6,10 +6,12 @@
         <el-collapse-item title="Network Configuration">
           <div class="form-group">
             <el-form-item label="Identifier Length">
-              <el-input v-model="config.IdentifierLength" type="number" placeholder="Enter Identifier Length"></el-input>
+              <el-input v-model="config.IdentifierLength" type="number"
+                placeholder="Enter Identifier Length"></el-input>
             </el-form-item>
             <el-form-item label="Successors Length">
-              <el-input v-model="config.SuccessorsLength" type="number" placeholder="Enter Successors Length"></el-input>
+              <el-input v-model="config.SuccessorsLength" type="number"
+                placeholder="Enter Successors Length"></el-input>
             </el-form-item>
             <el-form-item label="IP Address">
               <el-input v-model="config.IpAddress" type="text" placeholder="Enter IP Address"></el-input>
@@ -40,7 +42,8 @@
               <el-input v-model="config.FixFingersTime" type="number" placeholder="Enter Fix Fingers Time"></el-input>
             </el-form-item>
             <el-form-item label="Check Predecessor Time">
-              <el-input v-model="config.CheckPredecessorTime" type="number" placeholder="Enter Check Predecessor Time"></el-input>
+              <el-input v-model="config.CheckPredecessorTime" type="number"
+                placeholder="Enter Check Predecessor Time"></el-input>
             </el-form-item>
           </div>
         </el-collapse-item>
@@ -113,7 +116,7 @@ export default {
         IdentifierLength: 10,
         SuccessorsLength: 4,
         IpAddress: '127.0.0.1',
-        Port: 4170,
+        Port: '4170',
         Mode: 'create',
         JoinAddress: '',
         JoinPort: '',
@@ -142,21 +145,24 @@ export default {
 
         this.config.IdentifierLength = parseInt(this.config.IdentifierLength, 10);
         this.config.SuccessorsLength = parseInt(this.config.SuccessorsLength, 10);
-        this.config.Port = parseInt(this.config.Port, 10);
-        this.config.JoinPort = parseInt(this.config.JoinPort, 10);
         this.config.StabilizeTime = parseInt(this.config.StabilizeTime, 10);
         this.config.FixFingersTime = parseInt(this.config.FixFingersTime, 10);
         this.config.CheckPredecessorTime = parseInt(this.config.CheckPredecessorTime, 10);
 
         await axios.post('/new', this.config);
         await axios.get('/initialize');
+
         this.message = 'New node created successfully!';
         this.messageType = 'success';
 
         this.$emit('nodeCreated', true);
       } catch (err) {
         this.messageType = 'error';
-        this.message = 'Failed to create new node: ' + (err.response && err.response.data ? JSON.stringify(err.response.data) : err.message);
+        if (err.response && err.response.data) {
+          this.message = `Failed to create new node: ${err.response.data.error_message}`;
+        } else {
+          this.message = `Failed to create new node: ${err.message}`;
+        }
         this.$emit('nodeCreated', false);
       } finally {
         setTimeout(() => {
@@ -205,22 +211,33 @@ h2 {
 
 /* Custom style for el-collapse-item */
 :deep(.el-collapse-item__header) {
-  font-size: 18px; /* Adjust the font size as needed */
-  background-color: #ffffff; /* Match the background color */
-  border-radius: 8px; /* Match the border radius */
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1); /* Match the box shadow */
-  padding: 10px 20px; /* Add padding */
-  margin-bottom: 10px; /* Add margin */
+  font-size: 18px;
+  /* Adjust the font size as needed */
+  background-color: #ffffff;
+  /* Match the background color */
+  border-radius: 8px;
+  /* Match the border radius */
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  /* Match the box shadow */
+  padding: 10px 20px;
+  /* Add padding */
+  margin-bottom: 10px;
+  /* Add margin */
 }
 
 :deep(.el-collapse-item__wrap) {
-  background-color: #ffffff; /* Match the background color */
-  border-radius: 8px; /* Match the border radius */
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1); /* Match the box shadow */
-  margin-bottom: 20px; /* Add margin between items */
+  background-color: #ffffff;
+  /* Match the background color */
+  border-radius: 8px;
+  /* Match the border radius */
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  /* Match the box shadow */
+  margin-bottom: 20px;
+  /* Add margin between items */
 }
 
 :deep(.el-collapse-item__content) {
-  padding-bottom: 0; /* Remove the extra bottom padding */
+  padding-bottom: 0;
+  /* Remove the extra bottom padding */
 }
 </style>

@@ -32,11 +32,12 @@ export default {
         this.errorMessage = '';
         this.nodeState = null;
         const response = await axios.get('/printstate');
-        this.nodeState = response.data.nodestate;
+        const { node_state } = response.data.data;
+        this.nodeState = node_state;
         this.alertType = 'success';
         this.drawChordRing();
       } catch (err) {
-        this.errorMessage = 'Failed to retrieve node state: ' + (err.response ? err.response.data : err.message);
+        this.errorMessage = 'Failed to retrieve node state: ' + (err.response ? err.response.data.error_message : err.message);
         this.alertType = 'error';
       }
     },
