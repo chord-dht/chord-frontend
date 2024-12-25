@@ -1,104 +1,112 @@
 <template>
-  <div>
+  <div class="new-node">
     <h2>New Node</h2>
-    <div class="form-container">
-      <div class="form-column">
-        <div>
-          <label>Identifier Length:</label>
-          <input v-model="config.IdentifierLength" type="number" placeholder="Enter Identifier Length">
-        </div>
-        <div>
-          <label>Successors Length:</label>
-          <input v-model="config.SuccessorsLength" type="number" placeholder="Enter Successors Length">
-        </div>
-        <div>
-          <label>IP Address:</label>
-          <input v-model="config.IpAddress" type="text" placeholder="Enter IP Address">
-        </div>
-        <div>
-          <label>Port:</label>
-          <input v-model="config.Port" type="number" placeholder="Enter Port">
-        </div>
-        <div>
-          <label>Mode:</label>
-          <select v-model="config.Mode">
-            <option value="create">Create</option>
-            <option value="join">Join</option>
-          </select>
-        </div>
-        <div v-if="config.Mode === 'join'">
-          <label>Join Address:</label>
-          <input v-model="config.JoinAddress" type="text" placeholder="Enter Join Address">
-        </div>
-        <div v-if="config.Mode === 'join'">
-          <label>Join Port:</label>
-          <input v-model="config.JoinPort" type="number" placeholder="Enter Join Port">
-        </div>
-        <div>
-          <label>Stabilize Time:</label>
-          <input v-model="config.StabilizeTime" type="number" placeholder="Enter Stabilize Time">
-        </div>
-        <div>
-          <label>Fix Fingers Time:</label>
-          <input v-model="config.FixFingersTime" type="number" placeholder="Enter Fix Fingers Time">
-        </div>
-        <div>
-          <label>Check Predecessor Time:</label>
-          <input v-model="config.CheckPredecessorTime" type="number" placeholder="Enter Check Predecessor Time">
-        </div>
-      </div>
-      <div class="form-column">
-        <div>
-          <label>Storage Path:</label>
-          <input v-model="config.StorageDir" type="text" placeholder="Enter Storage Path">
-        </div>
-        <div>
-          <label>Backup Storage Path:</label>
-          <input v-model="config.BackupDir" type="text" placeholder="Backup Storage Path">
-        </div>
-        <div>
-          <label>AES Enabled:</label>
-          <select v-model="config.AESBool">
-            <option :value="true">Enabled</option>
-            <option :value="false">Disabled</option>
-          </select>
-        </div>
-        <div v-if="config.AESBool">
-          <label>AES Key Path:</label>
-          <input v-model="config.AESKeyPath" type="text" placeholder="Enter AES Key Path">
-        </div>
-        <div>
-          <label>TLS Enabled:</label>
-          <select v-model="config.TLSBool">
-            <option :value="true">Enabled</option>
-            <option :value="false">Disabled</option>
-          </select>
-        </div>
-        <div v-if="config.TLSBool">
-          <label>CA Certificate Path:</label>
-          <input v-model="config.CaCert" type="text" placeholder="Enter CA Certificate Path">
-        </div>
-        <div v-if="config.TLSBool">
-          <label>Server Certificate Path:</label>
-          <input v-model="config.ServerCert" type="text" placeholder="Enter Server Certificate Path">
-        </div>
-        <div v-if="config.TLSBool">
-          <label>Server Key Path:</label>
-          <input v-model="config.ServerKey" type="text" placeholder="Enter Server Key Path">
-        </div>
-      </div>
-    </div>
-    <button @click="newNode" :disabled="isInitializing">New Node</button>
-    <div v-if="message" :class="{'success-message': messageType === 'success', 'error-message': messageType === 'error'}">
+    <el-form :model="config" class="form-container">
+      <el-collapse>
+        <el-collapse-item title="Network Configuration">
+          <div class="form-group">
+            <el-form-item label="Identifier Length">
+              <el-input v-model="config.IdentifierLength" type="number" placeholder="Enter Identifier Length"></el-input>
+            </el-form-item>
+            <el-form-item label="Successors Length">
+              <el-input v-model="config.SuccessorsLength" type="number" placeholder="Enter Successors Length"></el-input>
+            </el-form-item>
+            <el-form-item label="IP Address">
+              <el-input v-model="config.IpAddress" type="text" placeholder="Enter IP Address"></el-input>
+            </el-form-item>
+            <el-form-item label="Port">
+              <el-input v-model="config.Port" type="number" placeholder="Enter Port"></el-input>
+            </el-form-item>
+            <el-form-item label="Mode">
+              <el-select v-model="config.Mode" placeholder="Select Mode">
+                <el-option label="Create" value="create"></el-option>
+                <el-option label="Join" value="join"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item v-if="config.Mode === 'join'" label="Join Address">
+              <el-input v-model="config.JoinAddress" type="text" placeholder="Enter Join Address"></el-input>
+            </el-form-item>
+            <el-form-item v-if="config.Mode === 'join'" label="Join Port">
+              <el-input v-model="config.JoinPort" type="number" placeholder="Enter Join Port"></el-input>
+            </el-form-item>
+          </div>
+        </el-collapse-item>
+        <el-collapse-item title="Timing Configuration">
+          <div class="form-group">
+            <el-form-item label="Stabilize Time">
+              <el-input v-model="config.StabilizeTime" type="number" placeholder="Enter Stabilize Time"></el-input>
+            </el-form-item>
+            <el-form-item label="Fix Fingers Time">
+              <el-input v-model="config.FixFingersTime" type="number" placeholder="Enter Fix Fingers Time"></el-input>
+            </el-form-item>
+            <el-form-item label="Check Predecessor Time">
+              <el-input v-model="config.CheckPredecessorTime" type="number" placeholder="Enter Check Predecessor Time"></el-input>
+            </el-form-item>
+          </div>
+        </el-collapse-item>
+        <el-collapse-item title="Storage Configuration">
+          <div class="form-group">
+            <el-form-item label="Storage Path">
+              <el-input v-model="config.StorageDir" type="text" placeholder="Enter Storage Path"></el-input>
+            </el-form-item>
+            <el-form-item label="Backup Storage Path">
+              <el-input v-model="config.BackupDir" type="text" placeholder="Enter Backup Storage Path"></el-input>
+            </el-form-item>
+          </div>
+        </el-collapse-item>
+        <el-collapse-item title="Security Configuration">
+          <div class="form-group">
+            <el-form-item label="AES Enabled">
+              <el-select v-model="config.AESBool" placeholder="Select AES">
+                <el-option :label="true" :value="true">Enabled</el-option>
+                <el-option :label="false" :value="false">Disabled</el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item v-if="config.AESBool" label="AES Key Path">
+              <el-input v-model="config.AESKeyPath" type="text" placeholder="Enter AES Key Path"></el-input>
+            </el-form-item>
+            <el-form-item label="TLS Enabled">
+              <el-select v-model="config.TLSBool" placeholder="Select TLS">
+                <el-option :label="true" :value="true">Enabled</el-option>
+                <el-option :label="false" :value="false">Disabled</el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item v-if="config.TLSBool" label="CA Certificate Path">
+              <el-input v-model="config.CaCert" type="text" placeholder="Enter CA Certificate Path"></el-input>
+            </el-form-item>
+            <el-form-item v-if="config.TLSBool" label="Server Certificate Path">
+              <el-input v-model="config.ServerCert" type="text" placeholder="Enter Server Certificate Path"></el-input>
+            </el-form-item>
+            <el-form-item v-if="config.TLSBool" label="Server Key Path">
+              <el-input v-model="config.ServerKey" type="text" placeholder="Enter Server Key Path"></el-input>
+            </el-form-item>
+          </div>
+        </el-collapse-item>
+      </el-collapse>
+      <el-button @click="newNode" :loading="isInitializing" type="primary" class="new-node-button">New Node</el-button>
+    </el-form>
+    <el-alert v-if="message" :type="messageType" :closable="false" class="result-alert">
       {{ message }}
-    </div>
+    </el-alert>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+import { ElAlert, ElButton, ElCollapse, ElCollapseItem, ElForm, ElFormItem, ElInput, ElOption, ElSelect } from 'element-plus';
 
 export default {
+  components: {
+    ElForm,
+    ElFormItem,
+    ElInput,
+    ElSelect,
+    ElOption,
+    ElButton,
+    ElAlert,
+    ElCollapse,
+    ElCollapseItem
+  },
   data() {
     return {
       config: {
@@ -152,38 +160,58 @@ export default {
 </script>
 
 <style scoped>
-#app {
+.new-node {
   padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 }
-h1, h2 {
+
+h2 {
   color: #333;
+  margin-bottom: 20px;
 }
-textarea, input {
-  display: block;
-  margin-bottom: 10px;
-}
-button {
-  margin-bottom: 10px;
-}
-pre {
-  background: #f4f4f4;
-  padding: 10px;
-}
-.success-message {
-  color: green;
-}
-.error-message {
-  color: red;
-}
+
 .form-container {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 20px;
 }
-.form-column {
-  flex: 1;
-  margin-right: 20px;
+
+.form-group {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 }
-.form-column:last-child {
-  margin-right: 0;
+
+.new-node-button {
+  align-self: center;
+}
+
+.result-alert {
+  margin-top: 20px;
+}
+
+/* Custom style for el-collapse-item */
+:deep(.el-collapse-item__header) {
+  font-size: 18px; /* Adjust the font size as needed */
+  background-color: #ffffff; /* Match the background color */
+  border-radius: 8px; /* Match the border radius */
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1); /* Match the box shadow */
+  padding: 10px 20px; /* Add padding */
+  margin-bottom: 10px; /* Add margin */
+}
+
+:deep(.el-collapse-item__wrap) {
+  background-color: #ffffff; /* Match the background color */
+  border-radius: 8px; /* Match the border radius */
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1); /* Match the box shadow */
+  margin-bottom: 20px; /* Add margin between items */
+}
+
+:deep(.el-collapse-item__content) {
+  padding-bottom: 0; /* Remove the extra bottom padding */
 }
 </style>

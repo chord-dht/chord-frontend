@@ -1,40 +1,57 @@
 <template>
   <div id="app">
-    <h1>Chord Backend Frontend</h1>
-    <NewNode v-if="showNewNode" @nodeCreated="handleNodeCreated" />
-    <div v-else>
-      <div>
-        <button @click="currentTab = 'quitNode'">Quit Node</button>
-        <button @click="currentTab = 'storefile'">Store File</button>
-        <button @click="currentTab = 'getfile'">Get File</button>
-        <button @click="currentTab = 'printState'">Print State</button>
-      </div>
-      <keep-alive>
-        <component :is="currentTabComponent" @action="handleAction" />
-      </keep-alive>
-    </div>
+    <el-container>
+      <el-header class="header">
+        <h1>Chord Backend Frontend</h1>
+      </el-header>
+      <el-main>
+        <NewNode v-if="showNewNode" @nodeCreated="handleNodeCreated" />
+        <div v-else>
+          <el-tabs v-model="currentTab" @tab-click="handleTabClick">
+            <el-tab-pane label="Quit Node" name="quitNode"></el-tab-pane>
+            <el-tab-pane label="Store File" name="storefile"></el-tab-pane>
+            <el-tab-pane label="Get File" name="getfile"></el-tab-pane>
+            <el-tab-pane label="Print State" name="printState"></el-tab-pane>
+            <el-tab-pane label="Chord Ring" name="chordRing"></el-tab-pane>
+          </el-tabs>
+          <keep-alive>
+            <component :is="currentTabComponent" @action="handleAction" />
+          </keep-alive>
+        </div>
+      </el-main>
+    </el-container>
   </div>
 </template>
 
 <script>
+import { ElButton, ElContainer, ElHeader, ElMain, ElRow, ElTabPane, ElTabs } from 'element-plus';
 import GetFile from './GetFile.vue';
 import NewNode from './NewNode.vue';
 import PrintState from './PrintState.vue';
 import QuitNode from './QuitNode.vue';
 import StoreFile from './StoreFile.vue';
+import ChordRing from './components/ChordRing.vue';
 
 export default {
   components: {
+    ElButton,
+    ElContainer,
+    ElHeader,
+    ElMain,
+    ElRow,
+    ElTabs,
+    ElTabPane,
     NewNode,
     QuitNode,
     PrintState,
     StoreFile,
-    GetFile
+    GetFile,
+    ChordRing
   },
   data() {
     return {
       showNewNode: true,
-      currentTab: 'storeGet'
+      currentTab: 'storefile'
     };
   },
   computed: {
@@ -48,8 +65,10 @@ export default {
           return GetFile;
         case 'printState':
           return PrintState;
+        case 'chordRing':
+          return ChordRing;
         default:
-          return PrintState;
+          return null; // Return null if no matching tab is found
       }
     }
   },
@@ -63,6 +82,12 @@ export default {
       if (!success) {
         this.showNewNode = true;
       }
+    },
+    handleTabClick(tab) {
+      const validTabs = ['quitNode', 'storefile', 'getfile', 'printState', 'chordRing'];
+      if (validTabs.includes(tab.name)) {
+        this.currentTab = tab.name;
+      }
     }
   }
 };
@@ -71,25 +96,27 @@ export default {
 <style scoped>
 #app {
   padding: 20px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
 }
-h1, h2 {
-  color: #333;
+
+.header {
+  background-color: #409eff;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
 }
-textarea, input {
-  display: block;
-  margin-bottom: 10px;
+
+h1 {
+  margin: 0;
+  font-size: 24px;
 }
-button {
-  margin-bottom: 10px;
+
+.el-tabs__header {
+  margin-bottom: 20px;
 }
-pre {
-  background: #f4f4f4;
-  padding: 10px;
-}
-.success-message {
-  color: green;
-}
-.error-message {
-  color: red;
+
+.el-tab-pane {
+  display: none;
 }
 </style>

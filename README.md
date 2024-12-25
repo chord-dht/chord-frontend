@@ -14,6 +14,8 @@ See [Vite Configuration Reference](https://vite.dev/config/).
 
 ```sh
 npm install vite -g create-vite
+npm install element-plus
+npm install d3
 ```
 
 ### Compile and Hot-Reload for Development

@@ -1,17 +1,22 @@
 <template>
-  <div>
+  <div class="quit-node">
     <h2>Quit Node</h2>
-    <button @click="quitNode">Quit Node</button>
-    <div v-if="quitMessage" :class="{'success-message': quitMessageType === 'success', 'error-message': quitMessageType === 'error'}">
+    <el-button @click="quitNode" type="primary" class="action-button">Quit Node</el-button>
+    <el-alert v-if="quitMessage" :type="quitMessageType" :closable="false" class="result-alert">
       {{ quitMessage }}
-    </div>
+    </el-alert>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+import { ElAlert, ElButton } from 'element-plus';
 
 export default {
+  components: {
+    ElButton,
+    ElAlert
+  },
   data() {
     return {
       quitMessage: '',
@@ -39,27 +44,30 @@ export default {
 </script>
 
 <style scoped>
-#app {
+.quit-node {
   padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 }
-h1, h2 {
+
+h2 {
   color: #333;
+  margin-bottom: 20px;
 }
-textarea, input {
-  display: block;
-  margin-bottom: 10px;
+
+.action-button {
+  margin-bottom: 20px;
 }
-button {
-  margin-bottom: 10px;
+
+.result-alert {
+  margin-top: 20px;
 }
+
 pre {
   background: #f4f4f4;
   padding: 10px;
-}
-.success-message {
-  color: green;
-}
-.error-message {
-  color: red;
+  border-radius: 4px;
+  overflow-x: auto;
 }
 </style>
