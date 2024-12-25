@@ -14,9 +14,7 @@
             <el-tab-pane label="Print State" name="printState"></el-tab-pane>
             <el-tab-pane label="Chord Ring" name="chordRing"></el-tab-pane>
           </el-tabs>
-          <keep-alive>
-            <component :is="currentTabComponent" @action="handleAction" />
-          </keep-alive>
+          <component :is="currentTabComponent" @action="handleAction" />
         </div>
       </el-main>
     </el-container>
@@ -25,12 +23,12 @@
 
 <script>
 import { ElButton, ElContainer, ElHeader, ElMain, ElRow, ElTabPane, ElTabs } from 'element-plus';
+import ChordRing from './ChordRing.vue';
 import GetFile from './GetFile.vue';
 import NewNode from './NewNode.vue';
 import PrintState from './PrintState.vue';
 import QuitNode from './QuitNode.vue';
 import StoreFile from './StoreFile.vue';
-import ChordRing from './components/ChordRing.vue';
 
 export default {
   components: {

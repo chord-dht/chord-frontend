@@ -67,7 +67,7 @@ export default {
         .enter().append('g')
         .attr('class', 'point')
         .attr('transform', d => {
-          const angle = (d.value / Math.pow(2, m)) * 2 * Math.PI - Math.PI / 2; // Adjust angle to start from top
+          const angle = (Number(d.value) / Math.pow(2, m)) * 2 * Math.PI - Math.PI / 2; // Adjust angle to start from top
           const x = this.radius * Math.cos(angle);
           const y = this.radius * Math.sin(angle);
           return `translate(${x}, ${y})`;
@@ -82,12 +82,12 @@ export default {
         .attr('dy', 5)
         .style('text-anchor', 'start')
         .style('fill', d => d.label === 'Node' ? 'red' : '#333') // Highlight the node text with red color
-        .text(d => d.value); // Display Identifier
+        .text(d => `${d.value} (${d.address}:${d.port})`); // Display Identifier, address, and port
 
       // Add star marker for the node
       const nodeData = data.find(d => d.label === 'Node');
       if (nodeData) {
-        const angle = (nodeData.value / Math.pow(2, m)) * 2 * Math.PI - Math.PI / 2;
+        const angle = (Number(nodeData.value) / Math.pow(2, m)) * 2 * Math.PI - Math.PI / 2;
         const x = this.radius * Math.cos(angle);
         const y = this.radius * Math.sin(angle);
         svg.append('text')
@@ -102,22 +102,26 @@ export default {
     getChordData() {
       const data = [];
       const seen = new Set();
+      const m = this.nodeState ? this.nodeState.fingerTable.length : 0;
+      const maxIdentifier = BigInt(2) ** BigInt(m);
+
       if (this.nodeState) {
-        const addData = (label, value) => {
-          if (!seen.has(value)) {
-            data.push({ label, value: parseInt(value) });
-            seen.add(value);
+        const addData = (label, value, address, port) => {
+          const intValue = BigInt(value);
+          if (!seen.has(intValue) && intValue < maxIdentifier) {
+            data.push({ label, value: intValue, address, port });
+            seen.add(intValue);
           }
         };
-        addData('Node', this.nodeState.info.Identifier);
+        addData('Node', this.nodeState.info.Identifier, this.nodeState.info.IpAddress, this.nodeState.info.Port);
         if (this.nodeState.predecessor) {
-          addData('Predecessor', this.nodeState.predecessor.Identifier);
+          addData('Predecessor', this.nodeState.predecessor.Identifier, this.nodeState.predecessor.IpAddress, this.nodeState.predecessor.Port);
         }
         this.nodeState.successors.forEach((successor, index) => {
-          addData(`Successor ${index}`, successor.Identifier);
+          addData(`Successor ${index}`, successor.Identifier, successor.IpAddress, successor.Port);
         });
         this.nodeState.fingerTable.forEach((finger, index) => {
-          addData(`Finger ${index}`, finger.Identifier);
+          addData(`Finger ${index}`, finger.Identifier, finger.IpAddress, finger.Port);
         });
       }
       return data;
