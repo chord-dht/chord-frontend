@@ -6,7 +6,28 @@
     </el-upload>
     <el-button @click="storeFile" :disabled="!file" type="primary" class="action-button">Store File</el-button>
     <el-alert v-if="storeFileResult" :type="storeFileResultType" :closable="false" class="result-alert">
-      <pre>{{ storeFileResult }}</pre>
+      <div v-if="storeFileResultType === 'success'">
+        <p><strong>File stored successfully!</strong></p>
+        <p><strong>File Identifier:</strong> {{ storeFileResult.file_identifier }}</p>
+        <p><strong>Target Node:</strong></p>
+        <ul>
+          <li><strong>Identifier:</strong> {{ storeFileResult.target_node.Identifier }}</li>
+          <li><strong>IP Address:</strong> {{ storeFileResult.target_node.IpAddress }}</li>
+          <li><strong>Port:</strong> {{ storeFileResult.target_node.Port }}</li>
+        </ul>
+      </div>
+      <div v-else>
+        <p><strong>Failed to store file:</strong> {{ storeFileResult.message }}</p>
+        <p v-if="storeFileResult.details"><strong>Details:</strong> {{ storeFileResult.details }}</p>
+        <p v-if="storeFileResult.file_identifier"><strong>File Identifier:</strong> {{ storeFileResult.file_identifier
+          }}</p>
+        <p v-if="storeFileResult.target_node"><strong>Target Node:</strong></p>
+        <ul v-if="storeFileResult.target_node">
+          <li><strong>Identifier:</strong> {{ storeFileResult.target_node.Identifier }}</li>
+          <li><strong>IP Address:</strong> {{ storeFileResult.target_node.IpAddress }}</li>
+          <li><strong>Port:</strong> {{ storeFileResult.target_node.Port }}</li>
+        </ul>
+      </div>
     </el-alert>
   </div>
 </template>
@@ -41,20 +62,16 @@ export default {
         formData.append('file', this.file);
         const response = await axios.post('/storefile', formData);
         const { file_identifier, target_node } = response.data.data;
-        this.storeFileResult = `File stored successfully! Identifier: ${file_identifier}, Target Node: ${JSON.stringify(target_node)}`;
+        this.storeFileResult = { file_identifier, target_node };
         this.storeFileResultType = 'success';
       } catch (err) {
-        this.storeFileResult = `Failed to store file: ${err.response ? err.response.data.error_message : err.message}`;
+        this.storeFileResult = {
+          message: err.response ? err.response.data.error_message : err.message,
+          details: err.response && err.response.data.details,
+          file_identifier: err.response && err.response.data.file_identifier,
+          target_node: err.response && err.response.data.target_node
+        };
         this.storeFileResultType = 'error';
-        if (err.response && err.response.data.details) {
-          this.storeFileResult += `\nDetails: ${err.response.data.details}`;
-        }
-        if (err.response && err.response.data.file_identifier) {
-          this.storeFileResult += `\nFile Identifier: ${err.response.data.file_identifier}`;
-        }
-        if (err.response && err.response.data.target_node) {
-          this.storeFileResult += `\nTarget Node: ${JSON.stringify(err.response.data.target_node)}`;
-        }
       }
     }
   }
@@ -84,6 +101,22 @@ h2 {
 
 .result-alert {
   margin-top: 20px;
+}
+
+.result-alert p {
+  margin: 0;
+  font-size: 16px;
+}
+
+.result-alert ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.result-alert ul li {
+  margin: 5px 0;
+  font-size: 16px;
 }
 
 pre {

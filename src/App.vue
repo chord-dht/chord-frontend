@@ -2,7 +2,7 @@
   <div id="app">
     <el-container>
       <el-header class="header">
-        <h1>Chord Backend Frontend</h1>
+        <h1>Chord Client</h1>
       </el-header>
       <el-main>
         <NewNode v-if="showNewNode" @nodeCreated="handleNodeCreated" />

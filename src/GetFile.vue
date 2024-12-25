@@ -4,7 +4,28 @@
     <el-input v-model="getFileFilename" placeholder="Enter filename" class="input-field"></el-input>
     <el-button @click="getFile" type="primary" class="action-button">Get File</el-button>
     <el-alert v-if="getFileResult" :type="getFileResultType" :closable="false" class="result-alert">
-      <pre>{{ getFileResult }}</pre>
+      <div v-if="getFileResultType === 'success'">
+        <p><strong>File downloaded successfully!</strong></p>
+        <p><strong>File Identifier:</strong> {{ getFileResult.file_identifier }}</p>
+        <p><strong>Target Node:</strong></p>
+        <ul>
+          <li><strong>Identifier:</strong> {{ getFileResult.target_node.Identifier }}</li>
+          <li><strong>IP Address:</strong> {{ getFileResult.target_node.IpAddress }}</li>
+          <li><strong>Port:</strong> {{ getFileResult.target_node.Port }}</li>
+        </ul>
+      </div>
+      <div v-else>
+        <p><strong>Failed to get file:</strong> {{ getFileResult.message }}</p>
+        <p v-if="getFileResult.details"><strong>Details:</strong> {{ getFileResult.details }}</p>
+        <p v-if="getFileResult.file_identifier"><strong>File Identifier:</strong> {{ getFileResult.file_identifier }}
+        </p>
+        <p v-if="getFileResult.target_node"><strong>Target Node:</strong></p>
+        <ul v-if="getFileResult.target_node">
+          <li><strong>Identifier:</strong> {{ getFileResult.target_node.Identifier }}</li>
+          <li><strong>IP Address:</strong> {{ getFileResult.target_node.IpAddress }}</li>
+          <li><strong>Port:</strong> {{ getFileResult.target_node.Port }}</li>
+        </ul>
+      </div>
     </el-alert>
   </div>
 </template>
@@ -44,20 +65,16 @@ export default {
         link.click();
         document.body.removeChild(link);
 
-        this.getFileResult = `File downloaded successfully! Identifier: ${file_identifier}, Target Node: ${JSON.stringify(target_node)}`;
+        this.getFileResult = { file_identifier, target_node };
         this.getFileResultType = 'success';
       } catch (err) {
-        this.getFileResult = `Failed to get file: ${err.response ? err.response.data.error_message : err.message}`;
+        this.getFileResult = {
+          message: err.response ? err.response.data.error_message : err.message,
+          details: err.response && err.response.data.details,
+          file_identifier: err.response && err.response.data.file_identifier,
+          target_node: err.response && err.response.data.target_node
+        };
         this.getFileResultType = 'error';
-        if (err.response && err.response.data.details) {
-          this.getFileResult += `\nDetails: ${err.response.data.details}`;
-        }
-        if (err.response && err.response.data.file_identifier) {
-          this.getFileResult += `\nFile Identifier: ${err.response.data.file_identifier}`;
-        }
-        if (err.response && err.response.data.target_node) {
-          this.getFileResult += `\nTarget Node: ${JSON.stringify(err.response.data.target_node)}`;
-        }
       }
     }
   }
@@ -87,6 +104,22 @@ h2 {
 
 .result-alert {
   margin-top: 20px;
+}
+
+.result-alert p {
+  margin: 0;
+  font-size: 16px;
+}
+
+.result-alert ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.result-alert ul li {
+  margin: 5px 0;
+  font-size: 16px;
 }
 
 pre {
