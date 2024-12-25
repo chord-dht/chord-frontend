@@ -18,7 +18,7 @@
         <h3>First Successor</h3>
         <NodeInfo :nodeInfo="nodeState.successors[0]" />
         <h3>Local Storage</h3>
-        <StorageList :title="'Local Storage'" :items="nodeState.localStorageName" />
+        <StorageList :title="'Local Storage'" :items="[nodeState.localStorageName]" />
         <h3>Successors and Backup Storages</h3>
         <div v-for="(successor, index) in nodeState.successors" :key="index">
           <SuccessorBackup :title="'Successor ' + index" :successor="successor"

@@ -18,8 +18,8 @@ export default {
       nodeState: null,
       errorMessage: '',
       alertType: '',
-      width: 600,
-      height: 600,
+      width: 800,
+      height: 800,
       radius: 250
     };
   },
