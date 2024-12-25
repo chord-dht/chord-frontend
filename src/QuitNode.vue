@@ -2,40 +2,27 @@
   <div class="quit-node">
     <h2>Quit Node</h2>
     <el-button @click="quitNode" type="primary" class="action-button">Quit Node</el-button>
-    <el-alert v-if="quitMessage" :type="quitMessageType" :closable="false" class="result-alert">
-      {{ quitMessage }}
-    </el-alert>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
-import { ElAlert, ElButton } from 'element-plus';
+import { ElButton, ElMessage } from 'element-plus';
 
 export default {
   components: {
-    ElButton,
-    ElAlert
-  },
-  data() {
-    return {
-      quitMessage: '',
-      quitMessageType: '',
-    };
+    ElButton
   },
   methods: {
     async quitNode() {
       try {
-        this.quitMessage = '';
-        const response = await axios.get('/quit');
-        const { message } = response.data;
-        this.quitMessage = message;
-        this.quitMessageType = 'success';
+        await axios.get('/quit');
+        ElMessage.success("Node quitted successfully!");
 
         this.$emit('action', false);
       } catch (err) {
-        this.quitMessage = 'Failed to quit node: ' + (err.response ? err.response.data.error_message : err.message);
-        this.quitMessageType = 'error';
+        const errorMessage = 'Failed to quit node: ' + (err.response ? err.response.data.error_message : err.message);
+        ElMessage.error(errorMessage);
 
         this.$emit('action', true);
       }
@@ -59,16 +46,5 @@ h2 {
 
 .action-button {
   margin-bottom: 20px;
-}
-
-.result-alert {
-  margin-top: 20px;
-}
-
-pre {
-  background: #f4f4f4;
-  padding: 10px;
-  border-radius: 4px;
-  overflow-x: auto;
 }
 </style>

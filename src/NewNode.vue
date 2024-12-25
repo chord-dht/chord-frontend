@@ -88,15 +88,12 @@
       </el-collapse>
       <el-button @click="newNode" :loading="isInitializing" type="primary" class="new-node-button">New Node</el-button>
     </el-form>
-    <el-alert v-if="message" :type="messageType" :closable="false" class="result-alert">
-      {{ message }}
-    </el-alert>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
-import { ElAlert, ElButton, ElCollapse, ElCollapseItem, ElForm, ElFormItem, ElInput, ElOption, ElSelect } from 'element-plus';
+import { ElButton, ElCollapse, ElCollapseItem, ElForm, ElFormItem, ElInput, ElMessage, ElOption, ElSelect } from 'element-plus';
 
 export default {
   components: {
@@ -106,7 +103,6 @@ export default {
     ElSelect,
     ElOption,
     ElButton,
-    ElAlert,
     ElCollapse,
     ElCollapseItem
   },
@@ -132,16 +128,15 @@ export default {
         ServerCert: '',
         ServerKey: ''
       },
-      message: '',
-      messageType: '',
-      isInitializing: false
+      isInitializing: false,
+      isSuccess: false
     };
   },
   methods: {
     async newNode() {
       try {
-        this.message = '';
         this.isInitializing = true;
+        this.isSuccess = false;
 
         this.config.IdentifierLength = parseInt(this.config.IdentifierLength, 10);
         this.config.SuccessorsLength = parseInt(this.config.SuccessorsLength, 10);
@@ -152,22 +147,24 @@ export default {
         await axios.post('/new', this.config);
         await axios.get('/initialize');
 
-        this.message = 'New node created successfully!';
-        this.messageType = 'success';
-
+        ElMessage.success('New node created successfully!');
+        this.isSuccess = true;
         this.$emit('nodeCreated', true);
       } catch (err) {
-        this.messageType = 'error';
         if (err.response && err.response.data) {
-          this.message = `Failed to create new node: ${err.response.data.error_message}`;
+          ElMessage.error(`Failed to create new node: ${err.response.data.error_message}`);
         } else {
-          this.message = `Failed to create new node: ${err.message}`;
+          ElMessage.error(`Failed to create new node: ${err.message}`);
         }
         this.$emit('nodeCreated', false);
       } finally {
-        setTimeout(() => {
+        if (this.isSuccess) {
+          setTimeout(() => {
+            this.isInitializing = false;
+          }, 5000);
+        } else {
           this.isInitializing = false;
-        }, 5000);
+        }
       }
     }
   }
@@ -205,39 +202,24 @@ h2 {
   align-self: center;
 }
 
-.result-alert {
-  margin-top: 20px;
-}
-
 /* Custom style for el-collapse-item */
 :deep(.el-collapse-item__header) {
   font-size: 18px;
-  /* Adjust the font size as needed */
   background-color: #ffffff;
-  /* Match the background color */
   border-radius: 8px;
-  /* Match the border radius */
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-  /* Match the box shadow */
   padding: 10px 20px;
-  /* Add padding */
   margin-bottom: 10px;
-  /* Add margin */
 }
 
 :deep(.el-collapse-item__wrap) {
   background-color: #ffffff;
-  /* Match the background color */
   border-radius: 8px;
-  /* Match the border radius */
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-  /* Match the box shadow */
   margin-bottom: 20px;
-  /* Add margin between items */
 }
 
 :deep(.el-collapse-item__content) {
   padding-bottom: 0;
-  /* Remove the extra bottom padding */
 }
 </style>

@@ -89,6 +89,7 @@ export default {
   },
   mounted() {
     window.addEventListener('scroll', this.handleScroll);
+    this.printState(); // Automatically call printState when the component is mounted
   },
   beforeDestroy() {
     window.removeEventListener('scroll', this.handleScroll);
@@ -115,9 +116,7 @@ h2 {
   color: #333;
   margin: 0;
   font-size: 24px;
-  /* Increase font size */
   font-weight: bold;
-  /* Make font bold */
 }
 
 .refresh-button {
@@ -142,9 +141,7 @@ h3 {
   color: #409eff;
   margin-bottom: 10px;
   font-size: 20px;
-  /* Increase font size */
   font-weight: bold;
-  /* Make font bold */
 }
 
 pre {
@@ -157,7 +154,6 @@ pre {
 .sticky-info {
   z-index: 1000;
   padding: 0;
-  /* Remove padding */
 }
 
 .fixed {
