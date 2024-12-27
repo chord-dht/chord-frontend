@@ -16,8 +16,8 @@
       </div>
       <div v-else>
         <p><strong>Failed to get file:</strong> {{ getFileResult.message }}</p>
-        <p v-if="getFileResult.details"><strong>Details:</strong> {{ getFileResult.details }}</p>
-        <p v-if="getFileResult.file_identifier"><strong>File Identifier:</strong> {{ getFileResult.file_identifier }}
+        <p v-if="getFileResult.file_identifier">
+          <strong>File Identifier:</strong> {{ getFileResult.file_identifier }}
         </p>
         <p v-if="getFileResult.target_node"><strong>Target Node:</strong></p>
         <ul v-if="getFileResult.target_node">
@@ -68,11 +68,11 @@ export default {
         this.getFileResult = { file_identifier, target_node };
         this.getFileResultType = 'success';
       } catch (err) {
+        const errorData = err.response && err.response.data;
         this.getFileResult = {
-          message: err.response ? err.response.data.error_message : err.message,
-          details: err.response && err.response.data.details,
-          file_identifier: err.response && err.response.data.file_identifier,
-          target_node: err.response && err.response.data.target_node
+          message: errorData ? errorData.error_message : err.message,
+          file_identifier: errorData && errorData.data && errorData.data.file_identifier,
+          target_node: errorData && errorData.data && errorData.data.target_node
         };
         this.getFileResultType = 'error';
       }

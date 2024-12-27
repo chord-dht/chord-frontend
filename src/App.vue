@@ -50,7 +50,7 @@ export default {
   data() {
     return {
       showNewNode: true,
-      currentTab: 'storefile'
+      currentTab: 'printState'
     };
   },
   computed: {
