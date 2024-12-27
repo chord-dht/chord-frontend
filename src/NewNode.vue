@@ -144,8 +144,8 @@ export default {
         this.config.FixFingersTime = parseInt(this.config.FixFingersTime, 10);
         this.config.CheckPredecessorTime = parseInt(this.config.CheckPredecessorTime, 10);
 
-        await axios.post('/new', this.config);
-        await axios.get('/initialize');
+        await axios.post('/api/new', this.config);
+        await axios.get('/api/initialize');
 
         ElMessage.success('New node created successfully!');
         this.isSuccess = true;

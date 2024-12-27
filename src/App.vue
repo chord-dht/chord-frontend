@@ -22,6 +22,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 import { ElButton, ElContainer, ElHeader, ElMain, ElRow, ElTabPane, ElTabs } from 'element-plus';
 import ChordRing from './ChordRing.vue';
 import GetFile from './GetFile.vue';
@@ -71,6 +72,15 @@ export default {
     }
   },
   methods: {
+    async checkNodeStatus() {
+      try {
+        const response = await axios.get('/api/nodestatus');
+        this.showNewNode = !response.data.exists;
+      } catch (err) {
+        console.error('Failed to check node status:', err);
+        this.showNewNode = true;
+      }
+    },
     handleNodeCreated(success) {
       if (success) {
         this.showNewNode = false;
@@ -87,6 +97,9 @@ export default {
         this.currentTab = tab.name;
       }
     }
+  },
+  async mounted() {
+    await this.checkNodeStatus();
   }
 };
 </script>

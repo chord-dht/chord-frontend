@@ -16,7 +16,7 @@ export default {
   methods: {
     async quitNode() {
       try {
-        await axios.get('/quit');
+        await axios.get('/api/quit');
         ElMessage.success("Node quitted successfully!");
 
         this.$emit('action', false);

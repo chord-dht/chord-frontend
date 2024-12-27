@@ -31,7 +31,7 @@ export default {
       try {
         this.errorMessage = '';
         this.nodeState = null;
-        const response = await axios.get('/printstate');
+        const response = await axios.get('/api/printstate');
         const { node_state } = response.data.data;
         this.nodeState = node_state;
         this.alertType = 'success';

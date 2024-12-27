@@ -60,7 +60,7 @@ export default {
         this.storeFileResult = '';
         const formData = new FormData();
         formData.append('file', this.file);
-        const response = await axios.post('/storefile', formData);
+        const response = await axios.post('/api/storefile', formData);
         const { file_identifier, target_node } = response.data.data;
         this.storeFileResult = { file_identifier, target_node };
         this.storeFileResultType = 'success';
